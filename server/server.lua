@@ -1,3 +1,5 @@
+--[ all "--" are the French versions of the notifications / Triggers, if you have some errors, contact me : Ukrainian Cat#8404 ]--
+
 if Config.Framework == 'esx' then    
     ESX = exports['es_extended']:getSharedObject()
     local playerBills = {}
@@ -10,6 +12,8 @@ if Config.Framework == 'esx' then
         playerBills[playerId][itemName] = itemPrice
         playerTotals[playerId] = (playerTotals[playerId] or 0) + itemPrice
         TriggerClientEvent('envi-receipts:notify',source, "Basket Updated", ('Item added to your bill: %s - $%d'):format(itemName, itemPrice), "info", 5000)
+        --  TriggerClientEvent('envi-receipts:notify',source, "Panier mis à jour !", ('Article ajouté à votre facture : %s - $%d'):format(itemName, itemPrice), "info", 5000)
+
     end
 
     RegisterNetEvent('envi-receipts:addItemToBill')
@@ -35,6 +39,8 @@ if Config.Framework == 'esx' then
             end
         else
             basket = "Your shopping basket is empty."
+            -- basket = "Votre panier est vide."
+
         end
 
         return basket
@@ -46,6 +52,7 @@ if Config.Framework == 'esx' then
         local total = 0
         local basket = ""
         if paid then status = "[ PAYMENT SUCCESSFUL ]" else status = "[ PAYMENT OUTSTANDING ]" end
+        -- if paid then status = "[ PAIEMENT RÉUSSI ]" else status = "[ PAIEMENT SUSPENDU ]" end
         local metadata = {
             description = ' ',
             type = xPlayer.job.label,
@@ -62,11 +69,15 @@ if Config.Framework == 'esx' then
                 basket = basket .. ('- %s - $%d\n'):format(item, price)
                 metadata["item" .. itemCount] = item
                 metadata["price" .. itemCount] = price
+                -- metadata["Objet" .. itemCount] = item
+                -- metadata["Prix" .. itemCount] = price
                 itemCount = itemCount + 1
                 total = total + price
             end
         else
             basket = "Your receipt is empty."
+            -- basket = "Votre reçu est vide."
+
         end
         if Config.UseApGovernmentTax then
             local taxType = "Item"
@@ -99,8 +110,12 @@ if Config.Framework == 'esx' then
             playerBills[playerId] = {}
             playerTotals[playerId] = 0
             TriggerClientEvent('envi-receipts:notify',source, "Basket Cleared", "The current bill has been cleared.", "success", 5000)
+            -- TriggerClientEvent('envi-receipts:notify',source, "Panier nettoyé", "La facture actuel a été approuvé.", "success", 5000)
+
         else
             TriggerClientEvent('envi-receipts:notify',source, "Basket Empty", "There is no bill to clear.", "error", 5000)
+            -- TriggerClientEvent('envi-receipts:notify',source, "Panier Vide", "Il n'y a pas de facture à régler.", "error", 5000)
+
         end
     end
 
@@ -197,12 +212,16 @@ if Config.Framework == 'esx' then
             local taxType = "Item"
             local tax = exports['ap-government-esx']:TaxAmounts(taxType)
             TriggerClientEvent('envi-receipts:notify',source, "Tax Rate", "The current tax rate for "..taxType.."s is "..tax.."%", "info", 5000)
+                -- TriggerClientEvent('envi-receipts:notify',source, "Taux d'imposition", "Le taux d'imposition actuel pour "..taxType.."s is "..tax.."%", "info", 5000)
+
         end)
     else
         RegisterNetEvent('envi-receipts:checkTax', function()
             local xPlayer = ESX.GetPlayerFromId(source)
             local tax = Config.TaxPercentage
             TriggerClientEvent('envi-receipts:notify',source, "The current tax rate is "..tax.."%", "info", 5000)
+               -- TriggerClientEvent('envi-receipts:notify',source, "Le taux d'imposition actuel est de "..tax.."%", "info", 5000)
+
         end)
     end
 elseif Config.Framework == 'qb' then
@@ -227,6 +246,8 @@ elseif Config.Framework == 'qb' then
         playerBills[playerId][itemName] = itemPrice
         playerTotals[playerId] = (playerTotals[playerId] or 0) + itemPrice
         TriggerClientEvent('envi-receipts:notify',source, "Basket Updated", ('Item added to your bill: %s - $%d'):format(itemName, itemPrice), "info", 5000)
+        -- TriggerClientEvent('envi-receipts:notify',source, "Panier mis à jour", ('Article ajouté à votre facture: %s - $%d'):format(itemName, itemPrice), "info", 5000)
+
     end
 
     RegisterNetEvent('envi-receipts:addItemToBill')
@@ -247,11 +268,15 @@ elseif Config.Framework == 'qb' then
 
         if playerBills[playerId] then
             basket = "Your shopping basket:\n"
+            -- basket = "Votre panier d'achat:\n"
+
             for item, price in pairs(playerBills[playerId]) do
                 basket = basket .. ('%s $%d\n'):format(item, price)
             end
         else
             basket = "Your shopping basket is empty."
+            -- basket = "Votre panier est vide."
+
         end
 
         return basket
@@ -263,6 +288,8 @@ elseif Config.Framework == 'qb' then
         local total = 0
         local basket = ""
         if paid then status = "[ PAYMENT SUCCESSFUL ]" else status = "[ PAYMENT OUTSTANDING ]" end
+        -- if paid then status = "[ PAIEMENT RÉUSSI ]" else status = "[ PAIEMENT SUSPENDU ]" end
+
         local metadata = {
             description = ' ',
             type = xPlayer.PlayerData.job.label,
@@ -275,6 +302,7 @@ elseif Config.Framework == 'qb' then
         metadata.time = currentTime
         if playerBills[playerId] then
             basket = "PURCHASED GOODS:\n"
+            -- basket = "BIENS ACHETÉS:\n"
             for item, price in pairs(playerBills[playerId]) do
                 basket = basket .. ('- %s - $%d\n'):format(item, price)
                 metadata["item" .. itemCount] = item
@@ -284,6 +312,7 @@ elseif Config.Framework == 'qb' then
             end
         else
             basket = "Your receipt is empty."
+            -- basket = "Votre reçu est vide."
         end
         if Config.UseApGovernmentTax then
             local taxType = "Item"
@@ -331,6 +360,8 @@ elseif Config.Framework == 'qb' then
         local basket = showBasket(source)
         local xPlayer = QBCore.Functions.GetPlayer(source)
         TriggerClientEvent('envi-receipts:notify',source, "Shopping Basket", basket, "info", 10000)
+     -- TriggerClientEvent('envi-receipts:notify',source, "Panier d'achat", basket, "info", 10000)
+
     end)
 
     RegisterNetEvent('envi-receipts:requestBasket')
@@ -415,12 +446,16 @@ elseif Config.Framework == 'qb' then
             local taxType = "Item"
             local tax = exports['ap-government']:TaxAmounts(taxType)
             TriggerClientEvent('envi-receipts:notify',source, "Tax Rate", "The current tax rate for "..taxType.."s is "..tax.."%", "info", 5000)
+         -- TriggerClientEvent('envi-receipts:notify',source, "Taux d'imposition", "Le taux d'imposition actuel pour "..taxType.."s is "..tax.."%", "info", 5000)
+
         end)
     else
         RegisterNetEvent('envi-receipts:checkTax', function()
             local xPlayer = ESX.GetPlayerFromId(source)
             local tax = Config.TaxPercentage
             TriggerClientEvent('envi-receipts:notify',source, "Tax Rate", "The current tax rate is "..tax.."%", "info", 5000)
+         -- TriggerClientEvent('envi-receipts:notify',source, "Le taux d'imposition actuel est de "..tax.."%", "info", 5000)
+
         end)
     end
 end
